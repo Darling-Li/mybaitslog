@@ -4,7 +4,6 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
-import org.apache.commons.lang.StringUtils;
 
 import java.awt.*;
 import java.util.Map;
@@ -82,13 +81,27 @@ public class PrintlnUtil {
         final String sqlType = SqlProUtil.getSqlType(rowLine);
         switch (sqlType) {
             case "insert":
+                println(project,
+                        rowLine,
+                        new ConsoleViewContentType("styleName", new TextAttributes(new Color(170, 110, 190), null, null, null, Font.PLAIN)),
+                        true);
+                break;
             case "update":
-                println(project, rowLine, ConsoleViewContentType.SYSTEM_OUTPUT, true);
+                println(project,
+                        rowLine,
+                        new ConsoleViewContentType("styleName", new TextAttributes(Color.PINK, null, null, null, Font.PLAIN)),
+                        true);
                 break;
             case "delete":
                 println(project,
                         rowLine,
                         new ConsoleViewContentType("styleName", new TextAttributes(Color.RED, null, null, null, Font.PLAIN)),
+                        true);
+                break;
+            case "select":
+                println(project,
+                        rowLine,
+                        new ConsoleViewContentType("styleName", new TextAttributes(Color.CYAN, null, null, null, Font.PLAIN)),
                         true);
                 break;
             default:

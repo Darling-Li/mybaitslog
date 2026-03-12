@@ -92,12 +92,13 @@ public class ConsolePanel {
             dialog.setLocationRelativeTo(null);//位置居中显示
             dialog.setVisible(true);
         });
-        actionGroup.add(new ConsoleActionGroup.FilterAction());
-        actionGroup.add(new ConsoleActionGroup.FormatAction());
-        actionGroup.add(new ConsoleActionGroup.ShowLiteralAction());
-        actionGroup.add(consoleView.createConsoleActions()[2]);
-        actionGroup.add(consoleView.createConsoleActions()[3]);
-        actionGroup.add(consoleView.createConsoleActions()[5]);
+//        actionGroup.add(new ConsoleActionGroup.FilterAction());
+//        actionGroup.add(new ConsoleActionGroup.FormatAction());
+//        actionGroup.add(new ConsoleActionGroup.ShowLiteralAction());
+//        actionGroup.add(consoleView.createConsoleActions()[2]);
+//        actionGroup.add(consoleView.createConsoleActions()[3]);
+//        actionGroup.add(consoleView.createConsoleActions()[5]);
+        actionGroup.addAll(consoleView.createConsoleActions());
         return ActionManager.getInstance().createActionToolbar("EventLog", actionGroup, false);
     }
 }

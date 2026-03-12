@@ -1,10 +1,10 @@
 <idea-plugin>
-    <id>com.linkkou.plugin.intellij.assistant.mybaitslog</id>
-    <name>MybatisLog</name>
-    <vendor email="chinacclk@gmail.com" url="https://github.com/Link-Kou/intellij-mybaitslog">linkkou</vendor>
+    <id>com.liyi.plugin.intellij.assistant.mybaitslog</id>
+    <name>Li-MybatisLog</name>
+    <vendor email="643849587@qq.com" url="https://github.com/Darling-Li/mybaitslog">Liyi</vendor>
 
     <!-- 插件版本 -->
-    <version>2.0.6</version>
+    <version>2.1.0</version>
     <!-- please see https://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
     <idea-version since-build="172"/>
     <!-- 插件的描述 -->
@@ -37,7 +37,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
         <consoleFilterProvider implementation="com.plugins.mybaitslog.MyBatisLogProvider"/>
-        <toolWindow id="MyBatis Log" secondary="true" icon="/icons/mybatis.png" anchor="bottom"
+        <toolWindow id="MyBatis Log" secondary="true" icon="/icons/new.svg" anchor="bottom"
                     factoryClass="com.plugins.mybaitslog.MyBatisLogToolWindow"/>
     </extensions>
 
