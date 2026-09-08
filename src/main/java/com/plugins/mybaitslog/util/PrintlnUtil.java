@@ -6,6 +6,8 @@ import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,10 +24,29 @@ public class PrintlnUtil {
      * 多项目控制台独立性
      */
     public static Map<String, ConsoleView> consoleViewMap = new ConcurrentHashMap<>();
+    private static final Map<String, List<PendingLine>> pendingLineMap = new ConcurrentHashMap<>();
+
+    private static final class PendingLine {
+        private final String text;
+        private final ConsoleViewContentType contentType;
+
+        private PendingLine(String text, ConsoleViewContentType contentType) {
+            this.text = text;
+            this.contentType = contentType;
+        }
+    }
 
 
-    public static void setConsoleView(Project project, ConsoleView consoleView) {
-        consoleViewMap.put(project.getBasePath(), consoleView);
+    public static synchronized void setConsoleView(Project project, ConsoleView consoleView) {
+        final String projectKey = project.getBasePath();
+        consoleViewMap.put(projectKey, consoleView);
+
+        List<PendingLine> pendingLines = pendingLineMap.remove(projectKey);
+        if (pendingLines != null) {
+            for (PendingLine pendingLine : pendingLines) {
+                consoleView.print(pendingLine.text, pendingLine.contentType);
+            }
+        }
     }
 
     /**
@@ -57,16 +78,20 @@ public class PrintlnUtil {
      * @param rowLine                行数据
      * @param consoleViewContentType 输出颜色
      */
-    public static void println(Project project, String rowLine, ConsoleViewContentType consoleViewContentType, boolean line, boolean lineBreak) {
-        ConsoleView consoleView = consoleViewMap.get(project.getBasePath());
+    public static synchronized void println(Project project, String rowLine, ConsoleViewContentType consoleViewContentType, boolean line, boolean lineBreak) {
+        final String projectKey = project.getBasePath();
+        ConsoleView consoleView = consoleViewMap.get(projectKey);
+        final String text = lineBreak ? rowLine + "\n" : rowLine;
         if (consoleView != null) {
-            if (lineBreak) {
-                consoleView.print(rowLine + "\n", consoleViewContentType);
-            } else {
-                consoleView.print(rowLine, consoleViewContentType);
-            }
+            consoleView.print(text, consoleViewContentType);
             if (line) {
                 consoleView.print(KeyNameUtil.LINE, ConsoleViewContentType.USER_INPUT);
+            }
+        } else {
+            List<PendingLine> pendingLines = pendingLineMap.computeIfAbsent(projectKey, key -> new ArrayList<>());
+            pendingLines.add(new PendingLine(text, consoleViewContentType));
+            if (line) {
+                pendingLines.add(new PendingLine(KeyNameUtil.LINE, ConsoleViewContentType.USER_INPUT));
             }
         }
     }
