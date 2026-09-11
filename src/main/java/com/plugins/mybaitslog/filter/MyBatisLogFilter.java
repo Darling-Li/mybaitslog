@@ -4,7 +4,6 @@ import com.intellij.execution.filters.Filter;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
 import com.plugins.mybaitslog.util.*;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -17,8 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public class MyBatisLogFilter implements Filter {
 
     private final Project project;
-    private static String preparingLine = "";
-    private static String parametersLine = "";
+    private final SqlLogPairer sqlLogPairer = new SqlLogPairer();
 
     public MyBatisLogFilter(Project project) {
         this.project = project;
@@ -40,19 +38,11 @@ public class MyBatisLogFilter implements Filter {
     private void prints(final String currentLine, int endPoint) {
         final String preparing = ConfigUtil.getPreparing();
         final String parameters = ConfigUtil.getParameters();
-        if (currentLine.contains(preparing)) {
-            preparingLine = currentLine;
-        }
-        if (!StringUtils.isEmpty(preparingLine) && currentLine.contains(parameters)) {
-            parametersLine = currentLine;
-        }
-        if (StringUtils.isNotEmpty(preparingLine) && StringUtils.isNotEmpty(parametersLine)) {
-            //序号前缀字符串
-            String[] restoreSql = SqlProUtil.restoreSql(preparingLine, parametersLine);
+        final SqlLogPairer.SqlLogPair sqlLogPair = sqlLogPairer.accept(currentLine, preparing, parameters);
+        if (sqlLogPair != null) {
+            String[] restoreSql = SqlProUtil.restoreSql(sqlLogPair.getPreparingLine(), sqlLogPair.getParametersLine());
             PrintlnUtil.println(project, KeyNameUtil.SQL_Line + restoreSql[0], ConsoleViewContentType.USER_INPUT);
             PrintlnUtil.printlnSqlType(project, restoreSql[1]);
-            preparingLine = "";
-            parametersLine = "";
         }
     }
 }

@@ -15,7 +15,7 @@ buildscript {
 plugins {
     id 'java'
     id 'idea'
-    id 'org.jetbrains.intellij' version '1.17.2'
+    id 'org.jetbrains.intellij' version '1.17.4'
 }
 
 //2.1 插件配置
@@ -43,8 +43,8 @@ dependencies {
 
 intellij {
     pluginName = "Li-MybatisLog"
-    version = "2020.2"
-    type = "IU"
+    version = "2023.3.8"
+    type = "IC"
     sandboxDir = "${rootProject.rootDir}/idea-sandbox"
     updateSinceUntilBuild = false
     downloadSources = false
